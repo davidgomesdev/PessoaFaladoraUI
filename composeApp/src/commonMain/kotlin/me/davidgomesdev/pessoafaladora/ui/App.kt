@@ -3,8 +3,10 @@ package me.davidgomesdev.pessoafaladora.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,7 +53,9 @@ fun App() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.background(backgroundColor).fillMaxSize()
+            modifier = Modifier
+                .background(backgroundColor)
+                .fillMaxSize()
                 .sizeIn(maxWidth = 700.dp)
         ) {
             Title()
@@ -62,8 +67,9 @@ fun App() {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(2f)
                         .padding(4.dp)
+                        .clip(RoundedCornerShape(8.dp))
                         .background(componentColumnBackgroundColor),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -92,9 +98,10 @@ fun App() {
                     Button(
                         onClick = { showContent = !showContent },
                         modifier = Modifier.padding(vertical = 16.dp),
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.White)
                     ) {
-                        Text("Pensar", color = Color.White)
+                        Text("Pensar")
                     }
                     Text(
                         "",
@@ -123,9 +130,14 @@ fun Title() {
 
 @Composable
 fun FernandoPessoaLogo(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(Res.drawable.logo),
-        contentDescription = "Fernando Pessoa",
-        modifier = modifier.fillMaxSize().padding(16.dp).clip(RoundedCornerShape(32.dp))
-    )
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(Res.drawable.logo),
+            contentDescription = "Fernando Pessoa",
+            modifier = Modifier
+                .sizeIn(maxHeight = 320.dp)
+                .aspectRatio(0.69f)
+                .clip(RoundedCornerShape(16.dp))
+        )
+    }
 }

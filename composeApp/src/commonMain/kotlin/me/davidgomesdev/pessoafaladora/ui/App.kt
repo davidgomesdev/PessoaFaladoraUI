@@ -56,7 +56,7 @@ fun App() {
             coroutineScope.launch {
                 isLoading = true
                 response = ""
-                thinkAPI.sendThinkRequest(textFieldState.text.toString()).onCompletion {
+                thinkAPI.sendThinkRequest(textFieldState.text.toString().trim()).onCompletion {
                     isLoading = false
                 }.collect {
                     if (it.contains("<sources>")) return@collect

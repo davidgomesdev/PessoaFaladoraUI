@@ -7,7 +7,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "Pessoa Faladora",
-        alwaysOnTop = true,
+        alwaysOnTop = false,
     ) {
         App()
     }

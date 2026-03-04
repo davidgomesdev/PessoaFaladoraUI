@@ -4,6 +4,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -20,10 +21,13 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-const val pessoaUrl = "http://l3n:8080/pensa"
+const val pessoaUrl = "http://127.0.0.1:8080/pensa"
 
 class ThinkAPI {
     private val client = HttpClient {
+        install(HttpTimeout) {
+            socketTimeoutMillis = 60_000
+        }
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {

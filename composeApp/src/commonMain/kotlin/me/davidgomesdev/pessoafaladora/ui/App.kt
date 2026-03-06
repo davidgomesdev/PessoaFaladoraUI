@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import me.davidgomesdev.pessoafaladora.ui.service.ThinkAPI
@@ -46,6 +47,7 @@ fun App() {
     MaterialTheme(typography = RobotoTypography()) {
         val textFieldState = remember { TextFieldState("") }
         var isLoading by remember { mutableStateOf(false) }
+        var responseSources by remember { mutableStateOf("") }
         var response by remember { mutableStateOf("") }
         val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
@@ -59,7 +61,13 @@ fun App() {
                 thinkAPI.sendThinkRequest(textFieldState.text.toString().trim()).onCompletion {
                     isLoading = false
                 }.collect {
-                    if (it.contains("<sources>")) return@collect
+                    if (it.contains("<sources>")) {
+                        responseSources = it
+                            .removePrefix("<sources>")
+                            .removeSuffix("</sources>")
+
+                        return@collect
+                    }
 
                     response += it
                 }
@@ -81,7 +89,7 @@ fun App() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 FernandoPessoaLogo(Modifier.weight(1f))
-                ThinkForm(textFieldState, isLoading, onSubmit, response)
+                ThinkForm(textFieldState, isLoading, onSubmit, responseSources, response)
             }
         }
     }
@@ -92,6 +100,7 @@ fun RowScope.ThinkForm(
     textFieldState: TextFieldState,
     isLoading: Boolean,
     onSubmit: () -> Unit,
+    responseSources: String,
     response: String
 ) {
     Column(
@@ -106,16 +115,28 @@ fun RowScope.ThinkForm(
         ThinkQueryTextField(textFieldState, isLoading, onSubmit)
         ThinkButton(onSubmit, isLoading)
         SelectionContainer {
-            Text(
-                response,
-                color = Color.White,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .background(componentsBackgroundColor)
-                    .defaultMinSize(minHeight = 120.dp)
-                    .padding(16.dp)
-            )
+            Column() {
+                Text(
+                    response,
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(componentsBackgroundColor)
+                        .defaultMinSize(minHeight = 120.dp)
+                        .padding(16.dp)
+                )
+                Text(
+                    "Fontes usadas:\n$responseSources",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 8.dp)
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 120.dp)
+                )
+            }
         }
     }
 }

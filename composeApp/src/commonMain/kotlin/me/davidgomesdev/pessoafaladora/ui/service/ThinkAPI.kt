@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-const val pessoaUrl = "http://127.0.0.1:8080/pensa"
+const val DEFAULT_PESSOA_URL = "http://127.0.0.1:8080/pensa"
+
+val pessoaUrl = getPessoaUrl()
 
 class ThinkAPI {
     private val client = HttpClient {

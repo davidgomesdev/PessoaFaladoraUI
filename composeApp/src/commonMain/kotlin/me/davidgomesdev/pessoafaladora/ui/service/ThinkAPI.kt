@@ -49,7 +49,7 @@ class ThinkAPI {
         query: String
     ) = channelFlow {
         try {
-            client.preparePut(pessoaUrl) {
+            client.preparePut("$pessoaUrl/pensa") {
                 accept(ContentType.Any)
                 contentType(ContentType.Application.Json)
                 setBody(ThinkPayload(query))

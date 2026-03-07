@@ -37,6 +37,7 @@ kotlin {
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
+            implementation(devNpm("copy-webpack-plugin", "12.0.2"))
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

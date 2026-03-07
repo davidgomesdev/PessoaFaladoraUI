@@ -37,7 +37,8 @@ fun FernandoPessoaLogo(modifier: Modifier = Modifier.Companion) {
             painter = painterResource(Res.drawable.logo),
             contentDescription = "Fernando Pessoa",
             modifier = Modifier
-                .sizeIn(maxHeight = 320.dp)
+                .sizeIn(maxHeight = 450.dp)
+                .padding(top = 8.dp)
                 .aspectRatio(0.69f)
                 .clip(RoundedCornerShape(16.dp))
         )

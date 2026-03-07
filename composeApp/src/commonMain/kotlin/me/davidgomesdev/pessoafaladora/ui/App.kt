@@ -129,7 +129,7 @@ fun RowScope.ThinkForm(
                 Text(
                     "Fontes usadas:\n$responseSources",
                     color = Color.Gray,
-                    fontSize = 10.sp,
+                    fontSize = 12.sp,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 8.dp)

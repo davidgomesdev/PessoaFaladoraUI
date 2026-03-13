@@ -39,6 +39,13 @@ import me.davidgomesdev.pessoafaladora.ui.widget.FernandoPessoaLogo
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkButton
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkQueryTextField
 
+data class PessoaResponse(var sources: String = "", var message: String = "") {
+    fun clear() {
+        sources = ""
+        message = ""
+    }
+}
+
 @Composable
 @Preview
 fun App() {
@@ -47,8 +54,7 @@ fun App() {
     MaterialTheme(typography = RobotoTypography()) {
         val textFieldState = remember { TextFieldState("") }
         var isLoading by remember { mutableStateOf(false) }
-        var responseSources by remember { mutableStateOf("") }
-        var response by remember { mutableStateOf("") }
+        var response by remember { mutableStateOf(PessoaResponse()) }
         val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
 
@@ -57,19 +63,20 @@ fun App() {
 
             coroutineScope.launch {
                 isLoading = true
-                response = ""
+                response.clear()
+
                 thinkAPI.sendThinkRequest(textFieldState.text.toString().trim()).onCompletion {
                     isLoading = false
                 }.collect {
                     if (it.contains("<sources>")) {
-                        responseSources = it
+                        response.sources = it
                             .removePrefix("<sources>")
                             .removeSuffix("</sources>")
 
                         return@collect
                     }
 
-                    response += it
+                    response.message += it
                 }
             }
         }
@@ -89,7 +96,7 @@ fun App() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 FernandoPessoaLogo(Modifier.weight(1f))
-                ThinkForm(textFieldState, isLoading, onSubmit, responseSources, response)
+                ThinkForm(textFieldState, isLoading, onSubmit, response.sources, response.message)
             }
         }
     }

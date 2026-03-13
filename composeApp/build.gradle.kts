@@ -15,7 +15,7 @@ kotlin {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -51,6 +51,37 @@ compose.resources {
     publicResClass = true
     packageOfResClass = "pessoafaladora.composeapp.generated.resources"
     generateResClass = always
+}
+
+val backendStaticDir = rootProject.layout.projectDirectory.dir("../PessoaFaladora/src/main/resources/web/static")
+val backendUiResourcesDir = rootProject.layout.projectDirectory.dir("../PessoaFaladora/uiResources/composeResources")
+
+
+val copyWebpackToBackend by tasks.registering(Copy::class) {
+    group = "deployment"
+    description =
+        "Copies the JS production webpack bundle (top-level files only) to the PessoaFaladora backend static resources"
+    dependsOn("jsBrowserProductionWebpack")
+    from(layout.buildDirectory.dir("kotlin-webpack/js/productionExecutable")) {
+        // index.html is already in template (with templating) and composeResources is copied in the other task
+        val webpackFilesToNotCopy = listOf("index.html", "composeResources")
+        exclude { webpackFilesToNotCopy.contains(it.name) }
+    }
+    into(backendStaticDir)
+}
+
+val copyResourcesToBackend by tasks.registering(Copy::class) {
+    group = "deployment"
+    description = "Copies compiled UI resources to the PessoaFaladora backend uiResources directory"
+    dependsOn("jsBrowserProductionWebpack")
+    from(layout.buildDirectory.dir("kotlin-webpack/js/productionExecutable/composeResources"))
+    into(backendUiResourcesDir)
+}
+
+tasks.register("deployToBackend") {
+    group = "deployment"
+    description = "Builds the JS bundle and deploys all assets to the PessoaFaladora backend"
+    dependsOn(copyWebpackToBackend, copyResourcesToBackend)
 }
 
 compose.desktop {

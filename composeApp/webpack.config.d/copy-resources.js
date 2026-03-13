@@ -7,7 +7,7 @@ config.plugins.push(
             {
                 from: path.resolve(__dirname, '../../../../composeApp/build/processedResources/js/main'),
                 to: '.',
-                noErrorOnMissing: true,
+                noErrorOnMissing: false,
             }
         ]
     })

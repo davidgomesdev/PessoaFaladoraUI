@@ -23,6 +23,7 @@ import kotlinx.serialization.json.Json
 
 const val DEFAULT_PESSOA_HOST = "127.0.0.1"
 
+@Suppress("HttpUrlsUsage")
 val pessoaUrl = "http://${getPessoaHost()}:8080"
 
 class ThinkAPI {

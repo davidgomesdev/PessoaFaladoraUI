@@ -76,7 +76,7 @@ fun App() {
                     when (event) {
                         is ChatEvent.Token -> response = response.copy(message = response.message + event.value)
                         is ChatEvent.Sources -> response = response.copy(
-                            sources = event.items.map { Source(it.title, it.author, it.category, it.score) }
+                            sources = event.items.map(Source::from)
                         )
 
                         is ChatEvent.Done -> {

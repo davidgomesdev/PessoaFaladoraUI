@@ -20,6 +20,7 @@ import io.ktor.utils.io.readAvailable
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import me.davidgomesdev.pessoafaladora.ui.model.Persona
 
 const val DEFAULT_PESSOA_HOST = "127.0.0.1"
 
@@ -37,7 +38,7 @@ class ThinkAPI {
                     Napier.v("HTTP Client", null, message)
                 }
             }
-            level = LogLevel.HEADERS
+            level = LogLevel.ALL
         }
         install(ContentNegotiation) {
             json(Json {
@@ -48,13 +49,13 @@ class ThinkAPI {
 
     fun sendThinkRequest(
         query: String,
-        plain: Boolean = false
+        persona: Persona
     ) = channelFlow {
         try {
             client.preparePut("$pessoaUrl/pensa") {
                 accept(ContentType.Any)
                 contentType(ContentType.Application.Json)
-                setBody(ThinkPayload(query, plain))
+                setBody(ThinkPayload(query, persona.codeName))
             }.execute { httpResponse ->
                 val channel: ByteReadChannel = httpResponse.body()
                 while (!channel.isClosedForRead) {
@@ -78,4 +79,4 @@ class ThinkAPI {
 }
 
 @Serializable
-data class ThinkPayload(val input: String, val plain: Boolean = false)
+data class ThinkPayload(val input: String, val persona: String)

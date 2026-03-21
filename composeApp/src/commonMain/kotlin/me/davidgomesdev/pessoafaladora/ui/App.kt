@@ -45,8 +45,16 @@ fun App() {
         var isLoading by remember { mutableStateOf(false) }
         var response by remember { mutableStateOf(PessoaResponse()) }
         var selectedPersona by remember { mutableStateOf(Persona.FERNANDO_PESSOA) }
+        var devMode by remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
+
+        val onDevModeToggle: () -> Unit = {
+            devMode = !devMode
+            if (!devMode && selectedPersona == Persona.O_FINGIDOR) {
+                selectedPersona = Persona.FERNANDO_PESSOA
+            }
+        }
 
         val onSubmit: () -> Unit = onSubmit@{
             if (textFieldState.text.isBlank()) return@onSubmit
@@ -55,7 +63,10 @@ fun App() {
                 isLoading = true
                 response = PessoaResponse()
 
-                thinkAPI.sendThinkRequest(textFieldState.text.toString().trim()).onCompletion {
+                thinkAPI.sendThinkRequest(
+                    query = textFieldState.text.toString().trim(),
+                    plain = selectedPersona == Persona.O_FINGIDOR
+                ).onCompletion {
                     isLoading = false
                 }.collect {
                     if (it.contains("<sources>")) {
@@ -81,7 +92,7 @@ fun App() {
                 .sizeIn(maxWidth = 700.dp)
                 .verticalScroll(scrollState)
         ) {
-            AppHeader()
+            AppHeader(devMode = devMode, onDevModeToggle = onDevModeToggle)
             Row(
                 modifier = Modifier
                     .requiredWidthIn(min = 320.dp)
@@ -91,6 +102,7 @@ fun App() {
                 PersonaSidebar(
                     selectedPersona = selectedPersona,
                     onPersonaSelected = { selectedPersona = it },
+                    devMode = devMode,
                     modifier = Modifier.weight(1f)
                 )
                 ThinkForm(textFieldState, isLoading, onSubmit, response.sources, response.message)

@@ -27,6 +27,9 @@ import me.davidgomesdev.pessoafaladora.ui.devChipTextColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
 import me.davidgomesdev.pessoafaladora.ui.model.Persona
 import me.davidgomesdev.pessoafaladora.ui.model.PersonaCategory
+import me.davidgomesdev.pessoafaladora.ui.ninguemChipBorderColor
+import me.davidgomesdev.pessoafaladora.ui.ninguemChipColor
+import me.davidgomesdev.pessoafaladora.ui.ninguemChipTextColor
 import me.davidgomesdev.pessoafaladora.ui.orthonymChipBorderColor
 import me.davidgomesdev.pessoafaladora.ui.orthonymChipColor
 import me.davidgomesdev.pessoafaladora.ui.orthonymChipTextColor
@@ -109,6 +112,7 @@ private fun PersonaChip(
     val bgColor = when {
         isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipColor
         isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipColor
+        isSelected && persona == Persona.NINGUEM -> ninguemChipColor
         isSelected && category == PersonaCategory.DEV -> devChipColor
         isSelected -> componentColumnBackgroundColor
         else -> Color.Transparent
@@ -116,6 +120,7 @@ private fun PersonaChip(
     val borderColor = when {
         isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipBorderColor
         isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipBorderColor
+        isSelected && persona == Persona.NINGUEM -> ninguemChipBorderColor
         isSelected && category == PersonaCategory.DEV -> devChipBorderColor
         isSelected -> focusedIndicatorColor
         else -> focusedIndicatorColor.copy(alpha = 0.3f)
@@ -123,6 +128,7 @@ private fun PersonaChip(
     val textColor = when {
         isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipTextColor
         isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipTextColor
+        isSelected && persona == Persona.NINGUEM -> ninguemChipTextColor
         isSelected && category == PersonaCategory.DEV -> devChipTextColor
         isSelected -> Color.White
         else -> Color.White.copy(alpha = 0.4f)

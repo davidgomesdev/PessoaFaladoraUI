@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import me.davidgomesdev.pessoafaladora.ui.cardBorderColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
 import me.davidgomesdev.pessoafaladora.ui.inputCardBackgroundColor
+import me.davidgomesdev.pessoafaladora.ui.model.Source
 import me.davidgomesdev.pessoafaladora.ui.responseCardBackgroundColor
 
 private val accentColor = Color(0xFF7C5CBF)
@@ -49,7 +50,7 @@ private val accentColor = Color(0xFF7C5CBF)
 @Composable
 fun ResponseCard(
     response: String,
-    sources: String,
+    sources: List<Source>,
     isLoading: Boolean
 ) {
     val infiniteTransition = rememberInfiniteTransition()
@@ -178,11 +179,9 @@ fun ResponseCard(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    sources
-                        .split("\n")
-                        .map(String::trim)
-                        .filter(String::isNotBlank)
-                        .forEach { SourceChip(it) }
+                    sources.forEach {
+                        SourceChip(it.title)
+                    }
                 }
             }
         }

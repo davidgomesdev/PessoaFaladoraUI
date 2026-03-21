@@ -1,5 +1,6 @@
 package me.davidgomesdev.pessoafaladora.ui
 
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
@@ -10,7 +11,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "Pessoa Faladora",
         alwaysOnTop = false,
-        state = WindowState(placement = WindowPlacement.Maximized),
+        state = WindowState(placement = WindowPlacement.Floating, width = 800.dp, height = 800.dp),
     ) {
         App()
     }

@@ -26,7 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
+import me.davidgomesdev.pessoafaladora.ui.dto.ChatEvent
 import me.davidgomesdev.pessoafaladora.ui.model.Persona
+import me.davidgomesdev.pessoafaladora.ui.model.Source
 import me.davidgomesdev.pessoafaladora.ui.service.ThinkAPI
 import me.davidgomesdev.pessoafaladora.ui.service.isDevMode
 import me.davidgomesdev.pessoafaladora.ui.widget.AppHeader
@@ -34,7 +36,7 @@ import me.davidgomesdev.pessoafaladora.ui.widget.PersonaSidebar
 import me.davidgomesdev.pessoafaladora.ui.widget.ResponseCard
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkInputCard
 
-data class PessoaResponse(val sources: String = "", val message: String = "")
+data class PessoaResponse(val sources: List<Source> = emptyList(), val message: String = "")
 
 @Composable
 @Preview
@@ -70,17 +72,17 @@ fun App() {
                     persona = selectedPersona
                 ).onCompletion {
                     isLoading = false
-                }.collect {
-                    if (it.contains("<sources>")) {
-                        response = response.copy(
-                            sources = it
-                                .removePrefix("<sources>")
-                                .removeSuffix("</sources>")
+                }.collect { event ->
+                    when (event) {
+                        is ChatEvent.Token -> response = response.copy(message = response.message + event.value)
+                        is ChatEvent.Sources -> response = response.copy(
+                            sources = event.items.map { Source(it.title, it.author, it.category, it.score) }
                         )
-                        return@collect
-                    }
 
-                    response = response.copy(message = response.message + it)
+                        is ChatEvent.Done -> {
+                            println("Completed")
+                        }
+                    }
                 }
             }
         }
@@ -121,7 +123,7 @@ fun RowScope.ThinkForm(
     textFieldState: TextFieldState,
     isLoading: Boolean,
     onSubmit: () -> Unit,
-    responseSources: String,
+    sources: List<Source>,
     response: String
 ) {
     Column(
@@ -136,7 +138,7 @@ fun RowScope.ThinkForm(
             SelectionContainer {
                 ResponseCard(
                     response = response,
-                    sources = responseSources,
+                    sources = sources,
                     isLoading = isLoading
                 )
             }

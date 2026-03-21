@@ -26,9 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
+import me.davidgomesdev.pessoafaladora.ui.model.Persona
 import me.davidgomesdev.pessoafaladora.ui.service.ThinkAPI
+import me.davidgomesdev.pessoafaladora.ui.service.isDevMode
 import me.davidgomesdev.pessoafaladora.ui.widget.AppHeader
-import me.davidgomesdev.pessoafaladora.ui.widget.Persona
 import me.davidgomesdev.pessoafaladora.ui.widget.PersonaSidebar
 import me.davidgomesdev.pessoafaladora.ui.widget.ResponseCard
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkInputCard
@@ -41,6 +42,7 @@ fun App() {
     val thinkAPI = ThinkAPI()
 
     MaterialTheme(typography = RobotoTypography()) {
+        val isDevModeEnabled = remember { isDevMode() }
         val textFieldState = remember { TextFieldState("") }
         var isLoading by remember { mutableStateOf(false) }
         var response by remember { mutableStateOf(PessoaResponse()) }
@@ -65,7 +67,7 @@ fun App() {
 
                 thinkAPI.sendThinkRequest(
                     query = textFieldState.text.toString().trim(),
-                    plain = selectedPersona == Persona.O_FINGIDOR
+                    persona = selectedPersona
                 ).onCompletion {
                     isLoading = false
                 }.collect {
@@ -92,7 +94,10 @@ fun App() {
                 .sizeIn(maxWidth = 700.dp)
                 .verticalScroll(scrollState)
         ) {
-            AppHeader(devMode = devMode, onDevModeToggle = onDevModeToggle)
+            AppHeader(
+                devMode = devMode,
+                onDevModeToggle = if (isDevModeEnabled) onDevModeToggle else null
+            )
             Row(
                 modifier = Modifier
                     .requiredWidthIn(min = 320.dp)

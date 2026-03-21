@@ -31,7 +31,7 @@ import pessoafaladora.composeapp.generated.resources.Res
 import pessoafaladora.composeapp.generated.resources.logo
 
 @Composable
-fun AppHeader(devMode: Boolean, onDevModeToggle: () -> Unit) {
+fun AppHeader(devMode: Boolean, onDevModeToggle: (() -> Unit)?) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -55,7 +55,9 @@ fun AppHeader(devMode: Boolean, onDevModeToggle: () -> Unit) {
                     modifier = Modifier.padding(top = 3.dp)
                 )
             }
-            DevModeToggle(active = devMode, onToggle = onDevModeToggle)
+            if (onDevModeToggle != null) {
+                DevModeToggle(active = devMode, onToggle = onDevModeToggle)
+            }
         }
         HorizontalDivider(color = cardBorderColor, thickness = 1.dp)
     }

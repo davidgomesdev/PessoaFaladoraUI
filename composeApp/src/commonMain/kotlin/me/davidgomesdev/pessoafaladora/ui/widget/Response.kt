@@ -8,6 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -28,7 +29,6 @@ import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,16 +38,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import kotlinx.coroutines.delay
 import me.davidgomesdev.pessoafaladora.ui.backgroundColor
 import me.davidgomesdev.pessoafaladora.ui.cardBorderColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
@@ -92,14 +91,14 @@ fun ResponseCard(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(responseCardBackgroundColor)
+            .background(responseCardBackgroundColor, RoundedCornerShape(10.dp))
             .border(1.dp, cardBorderColor, RoundedCornerShape(10.dp))
     ) {
         // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                 .background(inputCardBackgroundColor)
                 .padding(horizontal = 16.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -203,16 +202,10 @@ fun ResponseCard(
 private fun SourceChip(source: Source) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    var isTooltipVisible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isHovered) {
-        if (isHovered) {
-            isTooltipVisible = true
-        } else {
-            delay(50)
-            isTooltipVisible = false
-        }
-    }
+    // The user needs to click again on the Dialog to close it (and multiple are possible to be opened)
+    // cba for giving that tbh
+    var isClickedOpen by remember { mutableStateOf(false) }
+    val isTooltipVisible = isHovered || isClickedOpen
 
     Box {
         Text(
@@ -221,6 +214,9 @@ private fun SourceChip(source: Source) {
             fontSize = 11.sp,
             modifier = Modifier
                 .hoverable(interactionSource)
+                .clickable(interactionSource = interactionSource, indication = null) {
+                    isClickedOpen = !isClickedOpen
+                }
                 .clip(RoundedCornerShape(4.dp))
                 .background(inputCardBackgroundColor)
                 .border(
@@ -232,23 +228,31 @@ private fun SourceChip(source: Source) {
         )
 
         if (isTooltipVisible) {
-            Popup(
-                alignment = Alignment.TopCenter,
-                offset = IntOffset(0, -200)
+            // Popup would be better than this mess, but that was giving a layout error
+            // (possibly for being wrapped in the Box)
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .layout { measurable, _ ->
+                        val placeable = measurable.measure(Constraints())
+                        // Report 0x0 so this composable doesn't affect the chip Box's size.
+                        layout(0, 0) {
+                            // Places the tooltip centered horizontally and just above the chip.
+                            placeable.place(
+                                x = -placeable.width / 2,
+                                y = -placeable.height - 4.dp.roundToPx()
+                            )
+                        }
+                    }
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(backgroundColor)
+                    .border(1.dp, cardBorderColor, RoundedCornerShape(6.dp))
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .hoverable(interactionSource)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(backgroundColor)
-                        .border(1.dp, cardBorderColor, RoundedCornerShape(6.dp))
-                        .padding(horizontal = 10.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    SourceTooltipRow("Autor", source.author)
-                    SourceTooltipRow("Categoria", source.category)
-                    SourceTooltipRow("Relevância", "${source.score}%")
-                }
+                SourceTooltipRow("Autor", source.author)
+                SourceTooltipRow("Categoria", source.category)
+                SourceTooltipRow("Relevância", "${source.score}%")
             }
         }
     }

@@ -22,9 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.davidgomesdev.pessoafaladora.ui.componentColumnBackgroundColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
-import me.davidgomesdev.pessoafaladora.ui.selectedPersonaChipBorderColor
-import me.davidgomesdev.pessoafaladora.ui.selectedPersonaChipColor
-import me.davidgomesdev.pessoafaladora.ui.selectedPersonaChipTextColor
+import me.davidgomesdev.pessoafaladora.ui.orthonymChipBorderColor
+import me.davidgomesdev.pessoafaladora.ui.orthonymChipColor
+import me.davidgomesdev.pessoafaladora.ui.orthonymChipTextColor
+import me.davidgomesdev.pessoafaladora.ui.semiHeteronymChipBorderColor
+import me.davidgomesdev.pessoafaladora.ui.semiHeteronymChipColor
+import me.davidgomesdev.pessoafaladora.ui.semiHeteronymChipTextColor
 
 enum class PersonaCategory(val label: String) {
     ORTONIMO("Ortónimo"),
@@ -108,20 +111,23 @@ private fun PersonaChip(
     isSelected: Boolean,
     onSelected: () -> Unit
 ) {
-    val isOrtonimo = persona.category == PersonaCategory.ORTONIMO
+    val category = persona.category
 
     val bgColor = when {
-        isSelected && isOrtonimo -> selectedPersonaChipColor
+        isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipColor
+        isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipColor
         isSelected -> componentColumnBackgroundColor
         else -> Color.Transparent
     }
     val borderColor = when {
-        isSelected && isOrtonimo -> selectedPersonaChipBorderColor
+        isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipBorderColor
+        isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipBorderColor
         isSelected -> focusedIndicatorColor
         else -> focusedIndicatorColor.copy(alpha = 0.3f)
     }
     val textColor = when {
-        isSelected && isOrtonimo -> selectedPersonaChipTextColor
+        isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipTextColor
+        isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipTextColor
         isSelected -> Color.White
         else -> Color.White.copy(alpha = 0.4f)
     }

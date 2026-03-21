@@ -5,7 +5,7 @@
 Kotlin Multiplatform (KMP) + Compose Multiplatform UI for **Pessoa Faladora**, a chatbot that answers questions as the
 Portuguese poet Fernando Pessoa. The UI streams responses from a backend API and presents them in a dark-themed web app.
 
-**Targets:** WasmJS (primary/faster), JS (legacy browser support), JVM (desktop via Compose Desktop).
+**Targets:** JS (primary), JVM (desktop via Compose Desktop, for hot reload when developing).
 
 ---
 
@@ -17,7 +17,7 @@ composeApp/src/
   webMain/      ← Web-specific code (for JS)
   jsMain/       ← JS-target-specific code (Config.kt actual)
   jvmMain/      ← JVM desktop entry point (Window); also contains Config.kt actual
-  webTest/      ← Tests running on WasmJS/JS target
+  webTest/      ← Tests running on JS target
 ```
 
 `webMain` is not used — not to be confused with `jsMain`. Both Web, JS, and JVM targets share `commonMain` but have

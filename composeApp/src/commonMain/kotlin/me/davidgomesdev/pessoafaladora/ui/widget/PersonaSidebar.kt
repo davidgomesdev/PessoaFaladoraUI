@@ -21,6 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.davidgomesdev.pessoafaladora.ui.componentColumnBackgroundColor
+import me.davidgomesdev.pessoafaladora.ui.devChipBorderColor
+import me.davidgomesdev.pessoafaladora.ui.devChipColor
+import me.davidgomesdev.pessoafaladora.ui.devChipTextColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
 import me.davidgomesdev.pessoafaladora.ui.orthonymChipBorderColor
 import me.davidgomesdev.pessoafaladora.ui.orthonymChipColor
@@ -30,12 +33,14 @@ import me.davidgomesdev.pessoafaladora.ui.semiHeteronymChipColor
 import me.davidgomesdev.pessoafaladora.ui.semiHeteronymChipTextColor
 
 enum class PersonaCategory(val label: String) {
+    DEV("Dev"),
     ORTONIMO("Ortónimo"),
     HETERONIMO("Heterónimos"),
     SEMI_HETERONIMO("Semi-heterónimo")
 }
 
 enum class Persona(val displayName: String, val category: PersonaCategory) {
+    O_FINGIDOR("O Fingidor", PersonaCategory.DEV),
     FERNANDO_PESSOA("Fernando Pessoa", PersonaCategory.ORTONIMO),
     ALBERTO_CAEIRO("Alberto Caeiro", PersonaCategory.HETERONIMO),
     ALVARO_DE_CAMPOS("Álvaro de Campos", PersonaCategory.HETERONIMO),
@@ -47,6 +52,7 @@ enum class Persona(val displayName: String, val category: PersonaCategory) {
 fun PersonaSidebar(
     selectedPersona: Persona,
     onPersonaSelected: (Persona) -> Unit,
+    devMode: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -59,6 +65,7 @@ fun PersonaSidebar(
         Spacer(Modifier.height(16.dp))
 
         val categories = PersonaCategory.entries
+            .filter { it != PersonaCategory.DEV || devMode }
         categories.forEachIndexed { index, category ->
             val personasInCategory = Persona.entries.filter { it.category == category }
 
@@ -116,18 +123,21 @@ private fun PersonaChip(
     val bgColor = when {
         isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipColor
         isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipColor
+        isSelected && category == PersonaCategory.DEV -> devChipColor
         isSelected -> componentColumnBackgroundColor
         else -> Color.Transparent
     }
     val borderColor = when {
         isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipBorderColor
         isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipBorderColor
+        isSelected && category == PersonaCategory.DEV -> devChipBorderColor
         isSelected -> focusedIndicatorColor
         else -> focusedIndicatorColor.copy(alpha = 0.3f)
     }
     val textColor = when {
         isSelected && category == PersonaCategory.ORTONIMO -> orthonymChipTextColor
         isSelected && category == PersonaCategory.SEMI_HETERONIMO -> semiHeteronymChipTextColor
+        isSelected && category == PersonaCategory.DEV -> devChipTextColor
         isSelected -> Color.White
         else -> Color.White.copy(alpha = 0.4f)
     }

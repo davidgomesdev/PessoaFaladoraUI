@@ -18,6 +18,11 @@ val orthonymChipColor = Color(0xFF1F1A2E)
 val orthonymChipBorderColor = Color(0x557C5CBF)
 val orthonymChipTextColor = Color(0xFFC4AFF5)
 
+// Persona sidebar chip — dev mode active state (amber)
+val devChipColor = Color(0xFF1F1800)
+val devChipBorderColor = Color(0x55BFA040)
+val devChipTextColor = Color(0xFFCFAA50)
+
 // Persona sidebar chip — semi-heterónimo active state (same hue, halfway between orthonym and heteronym)
 val semiHeteronymChipColor = Color(0xFF211F2A)
 val semiHeteronymChipBorderColor = Color(0x3D7C5CBF)

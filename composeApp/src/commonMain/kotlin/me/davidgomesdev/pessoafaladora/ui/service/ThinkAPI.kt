@@ -47,13 +47,14 @@ class ThinkAPI {
     }.also { Napier.base(DebugAntilog()) }
 
     fun sendThinkRequest(
-        query: String
+        query: String,
+        plain: Boolean = false
     ) = channelFlow {
         try {
             client.preparePut("$pessoaUrl/pensa") {
                 accept(ContentType.Any)
                 contentType(ContentType.Application.Json)
-                setBody(ThinkPayload(query))
+                setBody(ThinkPayload(query, plain))
             }.execute { httpResponse ->
                 val channel: ByteReadChannel = httpResponse.body()
                 while (!channel.isClosedForRead) {
@@ -77,4 +78,4 @@ class ThinkAPI {
 }
 
 @Serializable
-data class ThinkPayload(val input: String)
+data class ThinkPayload(val input: String, val plain: Boolean = false)

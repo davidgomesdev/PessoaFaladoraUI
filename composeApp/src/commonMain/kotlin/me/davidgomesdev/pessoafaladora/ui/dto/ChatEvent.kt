@@ -16,7 +16,7 @@ sealed class ChatEvent {
 
         @Serializable
         data class Source(
-            val id: String,
+            val id: Long,
             val title: String,
             val author: String,
             val category: String,

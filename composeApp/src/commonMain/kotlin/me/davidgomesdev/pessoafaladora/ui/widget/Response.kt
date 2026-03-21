@@ -8,6 +8,9 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +28,11 @@ import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,8 +43,12 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import kotlinx.coroutines.delay
+import me.davidgomesdev.pessoafaladora.ui.backgroundColor
 import me.davidgomesdev.pessoafaladora.ui.cardBorderColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
 import me.davidgomesdev.pessoafaladora.ui.inputCardBackgroundColor
@@ -180,7 +191,7 @@ fun ResponseCard(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     sources.forEach {
-                        SourceChip(it.title)
+                        SourceChip(it)
                     }
                 }
             }
@@ -189,18 +200,74 @@ fun ResponseCard(
 }
 
 @Composable
-private fun SourceChip(text: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
-            .background(inputCardBackgroundColor)
-            .border(1.dp, cardBorderColor, RoundedCornerShape(4.dp))
-            .padding(horizontal = 8.dp, vertical = 3.dp)
-    ) {
+private fun SourceChip(source: Source) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+    var isTooltipVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isHovered) {
+        if (isHovered) {
+            isTooltipVisible = true
+        } else {
+            delay(50)
+            isTooltipVisible = false
+        }
+    }
+
+    Box {
         Text(
-            text,
-            color = focusedIndicatorColor.copy(alpha = 0.8f),
-            fontSize = 11.sp
+            source.title,
+            color = focusedIndicatorColor.copy(alpha = if (isTooltipVisible) 1f else 0.8f),
+            fontSize = 11.sp,
+            modifier = Modifier
+                .hoverable(interactionSource)
+                .clip(RoundedCornerShape(4.dp))
+                .background(inputCardBackgroundColor)
+                .border(
+                    1.dp,
+                    if (isTooltipVisible) focusedIndicatorColor.copy(alpha = 0.5f) else cardBorderColor,
+                    RoundedCornerShape(4.dp)
+                )
+                .padding(horizontal = 8.dp, vertical = 3.dp)
+        )
+
+        if (isTooltipVisible) {
+            Popup(
+                alignment = Alignment.TopCenter,
+                offset = IntOffset(0, -200)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .hoverable(interactionSource)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(backgroundColor)
+                        .border(1.dp, cardBorderColor, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    SourceTooltipRow("Autor", source.author)
+                    SourceTooltipRow("Categoria", source.category)
+                    SourceTooltipRow("Relevância", "${source.score}%")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SourceTooltipRow(label: String, value: String) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            label,
+            color = focusedIndicatorColor.copy(alpha = 0.5f),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.5.sp
+        )
+        Text(
+            value,
+            color = focusedIndicatorColor.copy(alpha = 0.9f),
+            fontSize = 10.sp
         )
     }
 }

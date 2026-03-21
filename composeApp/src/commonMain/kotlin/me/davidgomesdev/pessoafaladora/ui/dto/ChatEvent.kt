@@ -1,0 +1,32 @@
+package me.davidgomesdev.pessoafaladora.ui.dto
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class ChatEvent {
+
+    @Serializable
+    @SerialName("token")
+    data class Token(val value: String) : ChatEvent()
+
+    @Serializable
+    @SerialName("sources")
+    data class Sources(val items: List<Source> = listOf()) : ChatEvent() {
+
+        @Serializable
+        data class Source(
+            val title: String,
+            val author: String,
+            val category: String,
+            val score: Int,
+        )
+    }
+
+    @Serializable
+    @SerialName("done")
+    data class Done(
+        val tokensUsed: Int,
+        val timeTaken: String,
+    ) : ChatEvent()
+}

@@ -16,10 +16,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.readLine
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import me.davidgomesdev.pessoafaladora.ui.dto.ChatEvent
 import me.davidgomesdev.pessoafaladora.ui.model.Persona
 
 const val DEFAULT_PESSOA_HOST = "127.0.0.1"
@@ -59,21 +60,16 @@ class ThinkAPI {
             }.execute { httpResponse ->
                 val channel: ByteReadChannel = httpResponse.body()
                 while (!channel.isClosedForRead) {
-                    val buffer = ByteArray(4096)
-
-                    channel.readAvailable(buffer)
-
-                    val trimmed = buffer
-                        // removes extra bytes in the buffer (since the size is so big)
-                        .dropLastWhile { it == 0.toByte() }
-                        .toByteArray().decodeToString()
-
-                    send(trimmed)
+                    val line = channel.readLine() ?: break
+                    if (line.isBlank()) continue
+                    println(line)
+                    val event = Json.decodeFromString<ChatEvent>(line)
+                    send(event)
                 }
             }
         } catch (e: Exception) {
             Napier.e("Request failed", e)
-            send("Ho-oh, este não é o Pessoa a falar \uD83D\uDE2C. Ocorreu um erro!")
+            // todo: find a way of informing the user
         }
     }
 }

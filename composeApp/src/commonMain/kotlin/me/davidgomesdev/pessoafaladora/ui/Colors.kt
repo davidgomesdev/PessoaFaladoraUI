@@ -7,8 +7,18 @@ val componentsBackgroundColor = Color(0xFF323232)
 val componentColumnBackgroundColor = Color(0xFF242424)
 val focusedIndicatorColor = Color(0xFF575757)
 
-// Persona sidebar chip — ortónimo active state
-val selectedPersonaChipColor = Color(0xFF1F1A2E)
-val selectedPersonaChipBorderColor = Color(0x557C5CBF)
-val selectedPersonaChipTextColor = Color(0xFFC4AFF5)
+// Card surfaces and borders
+val inputCardBackgroundColor = Color(0xFF1E1E1E)
+val responseCardBackgroundColor = Color(0xFF191919)
+val cardBorderColor = Color(0xFF2A2A2A)
 
+// --- Persona sidebar chip ---
+//  - ortónimo active state
+val orthonymChipColor = Color(0xFF1F1A2E)
+val orthonymChipBorderColor = Color(0x557C5CBF)
+val orthonymChipTextColor = Color(0xFFC4AFF5)
+
+// Persona sidebar chip — semi-heterónimo active state (same hue, halfway between orthonym and heteronym)
+val semiHeteronymChipColor = Color(0xFF211F2A)
+val semiHeteronymChipBorderColor = Color(0x3D7C5CBF)
+val semiHeteronymChipTextColor = Color(0xFFAD9EDC)

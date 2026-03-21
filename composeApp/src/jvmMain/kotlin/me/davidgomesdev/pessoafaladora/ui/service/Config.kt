@@ -5,3 +5,6 @@ actual fun getPessoaHost(): String =
 
 actual fun isDevMode(): Boolean =
     System.getenv("IS_DEV_MODE") != "false"
+
+actual fun isMobileDevice(): Boolean = false
+

@@ -36,6 +36,7 @@ import me.davidgomesdev.pessoafaladora.ui.componentsBackgroundColor
 import me.davidgomesdev.pessoafaladora.ui.focusedIndicatorColor
 import me.davidgomesdev.pessoafaladora.ui.inputCardBackgroundColor
 import me.davidgomesdev.pessoafaladora.ui.isActionInputType
+import me.davidgomesdev.pessoafaladora.ui.service.isMobileDevice
 
 @Composable
 fun ThinkInputCard(
@@ -96,14 +97,16 @@ fun ThinkInputCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = if (isMobileDevice()) Arrangement.Center else Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                "⌘ Enter para enviar",
-                color = Color.White.copy(alpha = 0.25f),
-                fontSize = 11.sp
-            )
+            if (!isMobileDevice()) {
+                Text(
+                    "Control + Enter para enviar",
+                    color = Color.White.copy(alpha = 0.25f),
+                    fontSize = 11.sp
+                )
+            }
             ThinkButton(onSubmit, isLoading)
         }
     }

@@ -3,7 +3,7 @@ package me.davidgomesdev.pessoafaladora.ui.model
 import me.davidgomesdev.pessoafaladora.ui.dto.ChatEvent
 
 data class Source(
-    val id: String,
+    val id: Long,
     val title: String,
     val author: String,
     val category: String,

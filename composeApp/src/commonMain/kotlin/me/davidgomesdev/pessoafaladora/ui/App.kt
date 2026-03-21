@@ -35,7 +35,8 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import me.davidgomesdev.pessoafaladora.ui.service.ThinkAPI
 import me.davidgomesdev.pessoafaladora.ui.widget.AppTitle
-import me.davidgomesdev.pessoafaladora.ui.widget.FernandoPessoaLogo
+import me.davidgomesdev.pessoafaladora.ui.widget.Persona
+import me.davidgomesdev.pessoafaladora.ui.widget.PersonaSidebar
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkButton
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkQueryTextField
 
@@ -55,6 +56,7 @@ fun App() {
         val textFieldState = remember { TextFieldState("") }
         var isLoading by remember { mutableStateOf(false) }
         var response by remember { mutableStateOf(PessoaResponse()) }
+        var selectedPersona by remember { mutableStateOf(Persona.FERNANDO_PESSOA) }
         val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
 
@@ -95,7 +97,11 @@ fun App() {
                 modifier = Modifier.requiredWidthIn(min = 320.dp).padding(32.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                FernandoPessoaLogo(Modifier.weight(1f))
+                PersonaSidebar(
+                    selectedPersona = selectedPersona,
+                    onPersonaSelected = { selectedPersona = it },
+                    modifier = Modifier.weight(1f)
+                )
                 ThinkForm(textFieldState, isLoading, onSubmit, response.sources, response.message)
             }
         }

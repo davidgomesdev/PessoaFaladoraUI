@@ -33,12 +33,7 @@ import me.davidgomesdev.pessoafaladora.ui.widget.PersonaSidebar
 import me.davidgomesdev.pessoafaladora.ui.widget.ResponseCard
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkInputCard
 
-data class PessoaResponse(var sources: String = "", var message: String = "") {
-    fun clear() {
-        sources = ""
-        message = ""
-    }
-}
+data class PessoaResponse(val sources: String = "", val message: String = "")
 
 @Composable
 @Preview
@@ -58,20 +53,21 @@ fun App() {
 
             coroutineScope.launch {
                 isLoading = true
-                response.clear()
+                response = PessoaResponse()
 
                 thinkAPI.sendThinkRequest(textFieldState.text.toString().trim()).onCompletion {
                     isLoading = false
                 }.collect {
                     if (it.contains("<sources>")) {
-                        response.sources = it
-                            .removePrefix("<sources>")
-                            .removeSuffix("</sources>")
-
+                        response = response.copy(
+                            sources = it
+                                .removePrefix("<sources>")
+                                .removeSuffix("</sources>")
+                        )
                         return@collect
                     }
 
-                    response.message += it
+                    response = response.copy(message = response.message + it)
                 }
             }
         }

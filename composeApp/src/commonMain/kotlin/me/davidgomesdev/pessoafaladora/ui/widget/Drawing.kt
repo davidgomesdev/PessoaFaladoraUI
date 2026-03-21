@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -56,8 +55,7 @@ fun FernandoPessoaLogo(modifier: Modifier = Modifier.Companion) {
             painter = painterResource(Res.drawable.logo),
             contentDescription = "Fernando Pessoa",
             modifier = Modifier
-                .sizeIn(maxHeight = 450.dp)
-                .padding(top = 8.dp)
+                .fillMaxWidth()
                 .aspectRatio(0.69f)
                 .clip(RoundedCornerShape(16.dp))
         )

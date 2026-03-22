@@ -36,7 +36,7 @@ import me.davidgomesdev.pessoafaladora.ui.widget.PersonaSidebar
 import me.davidgomesdev.pessoafaladora.ui.widget.ResponseCard
 import me.davidgomesdev.pessoafaladora.ui.widget.ThinkInputCard
 
-data class PessoaResponse(val sources: List<Source> = emptyList(), val message: String = "")
+data class PessoaResponse(val sources: List<Source> = emptyList(), val message: String = "", val traceId: String = "")
 
 @Composable
 @Preview
@@ -74,6 +74,7 @@ fun App() {
                     isLoading = false
                 }.collect { event ->
                     when (event) {
+                        is ChatEvent.Start -> response = response.copy(traceId = event.traceId)
                         is ChatEvent.Token -> response = response.copy(message = response.message + event.value)
                         is ChatEvent.Sources -> response = response.copy(
                             sources = event.items.map(Source::from)
@@ -112,7 +113,15 @@ fun App() {
                     devMode = devMode,
                     modifier = Modifier.weight(1f)
                 )
-                ThinkForm(textFieldState, isLoading, onSubmit, response.sources, response.message)
+                ThinkForm(
+                    textFieldState,
+                    isLoading,
+                    devMode,
+                    onSubmit,
+                    response.sources,
+                    response.message,
+                    response.traceId
+                )
             }
         }
     }
@@ -122,9 +131,11 @@ fun App() {
 fun RowScope.ThinkForm(
     textFieldState: TextFieldState,
     isLoading: Boolean,
+    isDevMode: Boolean,
     onSubmit: () -> Unit,
     sources: List<Source>,
-    response: String
+    response: String,
+    traceId: String,
 ) {
     Column(
         modifier = Modifier
@@ -139,7 +150,9 @@ fun RowScope.ThinkForm(
                 ResponseCard(
                     response = response,
                     sources = sources,
-                    isLoading = isLoading
+                    isLoading = isLoading,
+                    traceId = traceId,
+                    isDevMode = isDevMode,
                 )
             }
         }

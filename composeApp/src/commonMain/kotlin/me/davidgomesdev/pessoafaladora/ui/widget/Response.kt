@@ -62,7 +62,10 @@ private val accentColor = Color(0xFF7C5CBF)
 fun ResponseCard(
     response: String,
     sources: List<Source>,
-    isLoading: Boolean
+    // Shown only in DEV mode
+    traceId: String,
+    isLoading: Boolean,
+    isDevMode: Boolean,
 ) {
     val infiniteTransition = rememberInfiniteTransition()
 
@@ -194,6 +197,16 @@ fun ResponseCard(
                         key(it.id) { SourceChip(it) }
                     }
                 }
+            }
+            if (isDevMode) {
+                Text(
+                    "Trace ID: $traceId",
+                    color = focusedIndicatorColor.copy(alpha = 0.7f),
+                    fontSize = 9.sp,
+                    letterSpacing = 1.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(top = 3.dp, start = 10.dp)
+                )
             }
         }
     }

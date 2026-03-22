@@ -7,6 +7,10 @@ import kotlinx.serialization.Serializable
 sealed class ChatEvent {
 
     @Serializable
+    @SerialName("start")
+    data class Start(val traceId: String) : ChatEvent()
+
+    @Serializable
     @SerialName("token")
     data class Token(val value: String) : ChatEvent()
 
